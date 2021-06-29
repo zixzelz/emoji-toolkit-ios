@@ -23,6 +23,14 @@ public class Client: ClientInterface {
     public var shortcodeRegEx: String = ":([-+\\w]+):"
     public var unicodeRegEx: String = "(?:\\u1f9d1[\\u1f3fb-\\u1f3ff]?\\u200d\\u1f91d\\u200d\\u1f9d1[\\u1f3fb-\\u1f3ff]?)|(?:[\\u1F3F3|\\u1F3F4]\\uFE0F?\\u200D?[\\u1F308|\\u2620]\\uFE0F?)|(?:\\u1F441\\uFE0F?\\u200D?\\u1F5E8\\uFE0F?)|(?:[\\u1f468|\\u1f469]\\u200d\\u2764\\ufe0f?\\u200d[\\u1f48b\\u200d]*[\\u1f468|\\u1f469])|(?:[\\u1f468|\\u1f469]\\u200d[\\u1f468|\\u1f469]\\u200d[\\u1f466|\\u1f467]\\u200d[\\u1f466|\\u1f467])|(?:[\\u1f468|\\u1f469]\\u200d[\\u1f466|\\u1f467]\\u200d[\\u1f466|\\u1f467])|(?:[\\u1f468|\\u1f469]\\u200d[\\u1f468|\\u1f469]\\u200d[\\u1f466|\\u1f467])|(?:[\\u1f468|\\u1f469]\\u200d[\\u1f466|\\u1f467])|(?:[\\u1F9B8|\\u1F9B9]+[\\u1F3FB-\\u1F3FF]?\\u200D[\\u2640-\\u2642]?\\uFE0F?)|(?:[\\u1F468|\\u1F469]+[\\u1F3FB-\\u1F3FF]?\\u200D[\\u1F9B0-\\u1F9B3]+\\uFE0F?)|[\\u0023-\\u0039]\\uFE0F?\\u20e3|(?:\\u1F3F4[\\uE0060-\\uE00FF]{1,6)|[\\u1F1E0-\\u1F1FF]{2|(?:[\\u1F468|\\u1F469]\\uFE0F?[\\u1F3FB-\\u1F3FF]?\\u200D?[\\u2695|\\u2696|\\u2708|\\u1F4BB|\\u1F4BC|\\u1F527|\\u1F52C|\\u1F680|\\u1F692|\\u1F33E|\\u1F3EB|\\u1F3EC|\\u1f373|\\u1f393|\\u1f3a4|\\u1f3ed|\\u1f3a8]\\uFE0F?)|[\\u1F468-\\u1F469\\u1F9D0-\\u1F9DF][\\u1F3FA-\\u1F3FF]?\\u200D?[\\u2640\\u2642\\u2695\\u2696\\u2708]?\\uFE0F?|(?:[\\u1F9B5|\\u1F9B6]+[\\u1F3FB-\\u1F3FF]+)|(?:[\\u1f46e\\u1F468\\u1F469\\u1f575\\u1f471-\\u1f487\\u1F645-\\u1F64E\\u1F926\\u1F937]|[\\u1F460-\\u1F482\\u1F3C3-\\u1F3CC\\u26F9\\u1F486\\u1F487\\u1F6A3-\\u1F6B6\\u1F938-\\u1F93E]|\\u1F46F)\\uFE0F?[\\u1F3FA-\\u1F3FF]?\\u200D?[\\u2640\\u2642]?\\uFE0F?|(?:[\\u26F9\\u261D\\u270A-\\u270D\\u1F385-\\u1F3CC\\u1F442-\\u1F4AA\\u1F574-\\u1F596\\u1F645-\\u1F64F\\u1F6A3-\\u1F6CC\\u1F918-\\u1F93E]\\uFE0F?[\\u1F3FA-\\u1F3FF])|(?:[\\u2194-\\u2199\\u21a9-\\u21aa]\\uFE0F?|[\\u0023-\\u002a]|[\\u3030\\u303d]\\uFE0F?|(?:[\\u1F170-\\u1F171]|[\\u1F17E-\\u1F17F]|\\u1F18E|[\\u1F191-\\u1F19A]|[\\u1F1E6-\\u1F1FF])\\uFE0F?|\\u24c2\\uFE0F?|[\\u3297\\u3299]\\uFE0F?|(?:[\\u1F201-\\u1F202]|\\u1F21A|\\u1F22F|[\\u1F232-\\u1F23A]|[\\u1F250-\\u1F251])\\uFE0F?|[\\u203c\\u2049]\\uFE0F?|[\\u25aa-\\u25ab\\u25b6\\u25c0\\u25fb-\\u25fe]\\uFE0F?|[\\u00a9\\u00ae]\\uFE0F?|[\\u2122\\u2139]\\uFE0F?|\\u1F004\\uFE0F?|[\\u2b05-\\u2b07\\u2b1b-\\u2b1c\\u2b50\\u2b55]\\uFE0F?|[\\u231a-\\u231b\\u2328\\u23cf\\u23e9-\\u23f3\\u23f8-\\u23fa]\\uFE0F?|\\u1F0CF|[\\u2934\\u2935]\\uFE0F?)|[\\u2700-\\u27bf]\\uFE0F?|[\\u1F000-\\u1F6FF\\u1F900-\\u1F9FF]\\uFE0F?|[\\u2600-\\u26ff]\\uFE0F?|(?:[\\u1F466-\\u1F469]+\\uFE0F?[\\u1F3FB-\\u1F3FF]?)|[\\u0030-\\u0039]\\uFE0F"
 
+    private var tones = [
+       ":skin-tone-2:": ("\u{1f3fb}","1f3fb"),
+       ":skin-tone-3:": ("\u{1f3fc}","1f3fc"),
+       ":skin-tone-4:": ("\u{1f3fd}","1f3fd"),
+       ":skin-tone-5:": ("\u{1f3fe}","1f3fe"),
+       ":skin-tone-6:": ("\u{1f3ff}","1f3ff")
+    ]
+
     public private(set) var ruleset: RulesetInterface
 
     /// ruleset: Optional
@@ -102,9 +110,46 @@ public class Client: ClientInterface {
             result = asciiToShortname(string: result)
         }
 
-        return regexReplace(regexString: shortcodeRegEx, string: result) { shortcode -> String in
+        return shortnameReplace(string: result) { shortcode, tone -> String in
+            if let replace = ruleset.getShortcodeReplace()[shortcode]?.0 {
+                let res = replace.components(separatedBy: "")
+            }
             return ruleset.getShortcodeReplace()[shortcode]?.0 ?? shortcode
         }
+    }
+
+    private func shortnameReplace(string: String, callback: (String, String?) -> String) -> String {
+        let regexString = shortcodeRegEx
+        let mutableString = NSMutableString(string: string)
+        var offset = 0
+
+        let matches = regexMatches(regexString: regexString, string: string)
+
+        let count = matches.count
+        var i: Int = 0
+        while i < count {
+            let (matchString, match) = matches[i]
+
+            var resultRange = match.range
+            resultRange.location += offset
+
+            let replacementString: String
+            if let next = i+1 < count ? matches[i+1] : nil, let tone = tones[next.0], match.range.upperBound == next.1.range.lowerBound {
+                replacementString = callback(matchString, tone.0).modifiedBy(Unicode.Scalar(tone.0)!)
+
+                resultRange.length += next.1.range.length
+                i += 1
+            } else {
+                replacementString = callback(matchString, nil)
+            }
+
+            mutableString.replaceCharacters(in: resultRange, with: replacementString)
+
+            offset += replacementString.utf16.count - resultRange.length
+            i += 1
+        }
+
+        return mutableString as String
     }
 
     /// This will replace ascii with their shortname equivalent
@@ -471,5 +516,81 @@ public class Client: ClientInterface {
     private func convertToHexString(string: String) -> String {
         let buffer: [UInt8] = Array(string.utf8)
         return buffer.map { String(format: "%02X", $0) }.joined()
+    }
+}
+
+private extension String {
+    // Returns the number of glyphs used to render the string. If this string
+    // should behave like a single emoji character (regardless of whether it is,
+    // internally, a sequence of characters), this property will return `1`.
+    var visibleCount: Int {
+        // https://crunchybagel.com/using-emoji-skin-tone-modifiers-in-swift/
+        // suggests that we could enumerate composed character sequences
+        // instead, but that implementation reports `1` even when the sequence
+        // won't actually be rendered as a single character.
+        let typesetString = CTLineCreateWithAttributedString(NSAttributedString(string: self))
+        return CTLineGetGlyphCount(typesetString)
+    }
+
+    // If this string contains multiple modifier bases, this function will
+    // apply the same modifier to all of them: `"👭".modifiedBy("🏻")` -> `"👭🏻"`.
+    // The spec https://unicode.org/reports/tr51/#multiperson_skintones and
+    // implementation (at least of macOS 10.15.4) allow for each base to take a
+    // different modifier e.g. 👩🏻‍🤝‍👩🏿 but this function does not yet support that.
+    // When we add support for that, we should enforce that modifying any base
+    // requires modifying all bases (in some way or another), per the spec.
+    //
+    // This function doesn't attempt to assess RGI status; some modified
+    // multi-person groupings, in particular, may not be rendered as of Emoji
+    // 13.0 https://unicode.org/reports/tr51/#multiperson_skintones .
+    // You can check `visibleCount` to guard against that, although the platform
+    // may ignore unsupported modifiers anyway, e.g.
+    // "\u{0001F46F}\u{0001F3FB}\u{200D}\u{2640}" and
+    // "\u{0001F46F}\u{200D}\u{2640}" will both render as 👯‍♀ on macOS 10.15.4.
+    func modifiedBy(_ modifier: Unicode.Scalar) -> String {
+        assert(modifier.properties.isEmojiModifier, "Scalar must be emoji modifier.")
+
+        return String(unicodeScalars.reduce(into: UnicodeScalarView(), { (modifiedScalars, scalar) in
+            // Strip variation selectors following modifiers because a) they'll
+            // break ZWJ sequences, at least on macOS 10.15.4 b) the spec says
+            // that "the emoji modifier automatically implies the emoji
+            // presentation" style https://unicode.org/reports/tr51/#Diversity
+            // and so recommends against including emoji presentation
+            // selectors. It's silent on whether text presentation selectors
+            // should be included or no but insofar as that would break the
+            // emoji modifier, seems like we should remove those too.
+            //
+            // Strip modifiers following modifiers because those are now
+            // invalid.
+            if scalar.properties.isVariationSelector || scalar.properties.isEmojiModifier,
+                let previousScalar = modifiedScalars.last,
+                previousScalar.properties.isEmojiModifier {
+                return
+            }
+
+            // If the current scalar is an emoji presentation selector and an
+            // emoji earlier in the sequence (but not immediately preceding)
+            // has been modified, it may not be strictly necessary to preserve
+            // this selector, depending on the preceding emoji's presentation
+            // style. However, we preserve such selectors to support modifying
+            // sequences generated by input devices, which the spec recommends
+            // https://unicode.org/reports/tr51/#Emoji_Variation_Selector_Notes
+            // only generate fully-qualified sequences.
+            //
+            // Also, if this scalar is a *text* presentation selector, it
+            // *must* be preserved, as it will break a ZWJ sequence as
+            // described in
+            // https://unicode.org/reports/tr51/#Emoji_Variation_Selector_Notes.
+
+            modifiedScalars.append(scalar)
+
+            // Emoji modifiers immediately follow base characters per
+            // https://unicode.org/reports/tr51/#Diversity , for single emojis
+            // as well as in ZWJ sequences
+            // https://unicode.org/reports/tr51/#multiperson_skintones .
+            if scalar.properties.isEmojiModifierBase {
+                modifiedScalars.append(modifier)
+            }
+        }))
     }
 }
